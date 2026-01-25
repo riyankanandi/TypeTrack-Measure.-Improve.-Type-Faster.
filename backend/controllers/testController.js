@@ -11,18 +11,18 @@ exports.saveTest = async (req, res) => {
       timeTaken == null) {
       return res.status(400).json({ error: "Missing required fields" });
     }
-
+    const userId = req.userId; //jwt
     const wpm = calculateWPM(correctChars, timeTaken);
     const accuracy = calculateAccuracy(correctChars, totalChars);
 
-    const query = `
-      INSERT INTO typing_tests 
-      (wpm, accuracy, total_chars, correct_chars, time_taken)
-      VALUES ($1, $2, $3, $4, $5)
+const query = `
+      INSERT INTO typing_tests
+      (user_id, wpm, accuracy, total_chars, correct_chars, time_taken)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *;
     `;
 
-    const values = [wpm, accuracy, totalChars, correctChars, timeTaken];
+    const values = [userId,wpm, accuracy, totalChars, correctChars, timeTaken];
 
     const result = await pool.query(query, values);
 
@@ -37,7 +37,7 @@ exports.saveTest = async (req, res) => {
 exports.getAllTests = async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT * FROM typing_tests ORDER BY created_at DESC"
+      "SELECT * FROM typing_tests ORDER BY created_at DESC", [userId]
     );
 
     res.status(200).json(result.rows);

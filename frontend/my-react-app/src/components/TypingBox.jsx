@@ -1,24 +1,22 @@
-import { useState } from "react";
-import { saveTest } from "../services/api";
-import { useEffect} from "react";
+import { useEffect, useState } from "react";
+import { apiRequest } from "../services/api";
+
 function TypingBox({ time, setTime, isRunning, setIsRunning }) {
   const [typedText, setTypedText] = useState("");
-   const [sampleText, setSampleText] = useState("");
+  const [sampleText, setSampleText] = useState("");
   const [correctChars, setCorrectChars] = useState(0);
   const [loading, setLoading] = useState(false);
-  // const [time, setTime] = useState(0);
-// const [isRunning, setIsRunning] = useState(false);
   const [result, setResult] = useState(null);
-  // Fetch text on first load
+// const navigate = useNavigate();
+
+  // fetch text on load
   useEffect(() => {
     fetchText();
   }, []);
-    const fetchText = async () => {
+
+  const fetchText = async () => {
     try {
-      const res = await fetch(
-        // "https://api.quotable.io/random?minLength=400&maxLength=800"
-        "https://dummyjson.com/quotes/random"
-      );
+      const res = await fetch("https://dummyjson.com/quotes/random");
       const data = await res.json();
       setSampleText(data.quote);
     } catch (err) {
@@ -26,100 +24,81 @@ function TypingBox({ time, setTime, isRunning, setIsRunning }) {
     }
   };
 
+  const handleChange = (e) => {
+    const value = e.target.value;
 
-const handleChange = (e) => {
-  
-  const value = e.target.value;
+    if (!isRunning) setIsRunning(true);
 
-  // Start timer only once
-  if (!isRunning) setIsRunning(true);
+    setTypedText(value);
 
-  setTypedText(value);
+    let correct = 0;
+    for (let i = 0; i < value.length && i < sampleText.length; i++) {
+      if (value[i] === sampleText[i]) correct++;
+    }
 
-  let correct = 0;
-  for (let i = 0; i < value.length && i < sampleText.length; i++) {
-    if (value[i] === sampleText[i]) correct++;
-  }
+    setCorrectChars(correct);
+  };
 
-  setCorrectChars(correct);
-};
+  const handleSubmit = async () => {
+    if (!typedText.length) {
+      alert("Start typing first!");
+      return;
+    }
 
+    setIsRunning(false);
 
+    const wpm = Math.round((typedText.length / 5) / (time / 60));
+    const accuracy = Math.round((correctChars / typedText.length) * 100);
 
-
-   const handleSubmit = async () => {
- if (typedText.length === 0) {
-    alert("Start the test and type first!");
-    return;
-  }
-  setIsRunning(false); 
-
-    const data = {
-      totalChars: typedText.length,
-      correctChars,
-      timeTaken: time,
-    };
     try {
       setLoading(true);
-     const response = await saveTest(data);
-    console.log("DB returned:", response);
-    // show backend-calculated result
-    setResult({
-      wpm: response.wpm,
-      accuracy: response.accuracy,
-      time: response.time_taken,
-// setResult({
-//         wpm,
-//         accuracy,
-//         time,
+
+      const response = await apiRequest("/scores", {
+        method: "POST",
+        body: JSON.stringify({ wpm, accuracy }),
       });
 
-      setIsRunning(false);
+      // show result immediately
+      setResult({
+        wpm: response.wpm,
+        accuracy: response.accuracy,
+      });
+
     } catch (err) {
       console.error(err);
-      alert("Failed to save test");
+      alert("Failed to save score");
     } finally {
       setLoading(false);
     }
   };
-const handleReset = () => {
-  setTypedText("");
-  setCorrectChars(0);
-  setResult(null);
-  setTime(0);
-  setIsRunning(false);
-  fetchText();
-};
 
+  const handleReset = () => {
+    setTypedText("");
+    setCorrectChars(0);
+    setResult(null);
+    setTime(0);
+    setIsRunning(false);
+    fetchText();
+  };
 
   return (
     <div style={{ textAlign: "center" }}>
-      <p 
-  onCopy={(e) => e.preventDefault()}
-  onCut={(e) => e.preventDefault()}
-  onContextMenu={(e) => e.preventDefault()}
-  style={{
-    color: "#E6E1F0",
-    marginBottom: "10px",
-    userSelect: "none",
-    WebkitUserSelect: "none",
-    MozUserSelect: "none",
-    msUserSelect: "none",
-  }}
->
+      <p
+        onCopy={(e) => e.preventDefault()}
+        onContextMenu={(e) => e.preventDefault()}
+        style={{
+          color: "#E6E1F0",
+          marginBottom: "10px",
+          userSelect: "none",
+        }}
+      >
         {sampleText}
       </p>
 
       <textarea
         value={typedText}
         onChange={handleChange}
-       onPaste={(e) => {
-  e.preventDefault();
-  alert("Paste is disabled during typing test");
-}}
-  onCopy={(e) => e.preventDefault()}
-  onCut={(e) => e.preventDefault()}
-  onContextMenu={(e) => e.preventDefault()}
+        onPaste={(e) => e.preventDefault()}
         placeholder="Start typing..."
         style={{
           width: "80%",
@@ -136,7 +115,6 @@ const handleReset = () => {
       />
 
       <br />
-   
 
       <button
         onClick={handleSubmit}
@@ -153,26 +131,28 @@ const handleReset = () => {
       >
         {loading ? "Saving..." : "Submit"}
       </button>
+
       {result && (
         <div style={{ marginTop: "30px", color: "#E6E1F0" }}>
           <h3 style={{ color: "#B983FF" }}>Result</h3>
           <p>WPM: {result.wpm}</p>
           <p>Accuracy: {result.accuracy}%</p>
-          <p>Time Taken: {result.time} sec</p>
+          <p>Time Taken: {time} sec</p>
+
           <button
-      onClick={handleReset}
-      style={{
-        marginTop: "15px",
-        padding: "8px 20px",
-        background: "#1A1333",
-        color: "#B983FF",
-        border: "1px solid #5B2EFF",
-        borderRadius: "6px",
-        cursor: "pointer",
-      }}
-    >
-      Reset
-    </button>
+            onClick={handleReset}
+            style={{
+              marginTop: "15px",
+              padding: "8px 20px",
+              background: "#1A1333",
+              color: "#B983FF",
+              border: "1px solid #5B2EFF",
+              borderRadius: "6px",
+              cursor: "pointer",
+            }}
+          >
+            Reset
+          </button>
         </div>
       )}
     </div>
@@ -183,43 +163,83 @@ export default TypingBox;
 
 
 
-
-
-// function TypingBox({ time }) {
+// import { useState } from "react";
+// import { saveTest } from "../services/api";
+// import { useEffect} from "react";
+// function TypingBox({ time, setTime, isRunning, setIsRunning }) {
 //   const [typedText, setTypedText] = useState("");
+//    const [sampleText, setSampleText] = useState("");
 //   const [correctChars, setCorrectChars] = useState(0);
 //   const [loading, setLoading] = useState(false);
-
-//   // TEMP sample text (later dynamic)
-//   const sampleText =
-//     "practice makes progress focus on accuracy then speed";
-
-//   const handleChange = (e) => {
-//     const value = e.target.value;
-//     setTypedText(value);
-
-//     let correct = 0;
-//     for (let i = 0; i < value.length; i++) {
-//       if (value[i] === sampleText[i]) correct++;
+//   // const [time, setTime] = useState(0);
+// // const [isRunning, setIsRunning] = useState(false);
+//   const [result, setResult] = useState(null);
+//   // Fetch text on first load
+//   useEffect(() => {
+//     fetchText();
+//   }, []);
+//     const fetchText = async () => {
+//     try {
+//       const res = await fetch(
+//         // "https://api.quotable.io/random?minLength=400&maxLength=800"
+//         "https://dummyjson.com/quotes/random"
+//       );
+//       const data = await res.json();
+//       setSampleText(data.quote);
+//     } catch (err) {
+//       console.error("Failed to fetch text", err);
 //     }
-//     setCorrectChars(correct);
 //   };
 
-//   const handleSubmit = async () => {
-//     if (typedText.length === 0) return alert("Type something first");
+
+// const handleChange = (e) => {
+  
+//   const value = e.target.value;
+
+//   // Start timer only once
+//   if (!isRunning) setIsRunning(true);
+
+//   setTypedText(value);
+
+//   let correct = 0;
+//   for (let i = 0; i < value.length && i < sampleText.length; i++) {
+//     if (value[i] === sampleText[i]) correct++;
+//   }
+
+//   setCorrectChars(correct);
+// };
+
+
+
+
+//    const handleSubmit = async () => {
+//  if (typedText.length === 0) {
+//     alert("Start the test and type first!");
+//     return;
+//   }
+//   setIsRunning(false); 
 
 //     const data = {
 //       totalChars: typedText.length,
-//       correctChars: correctChars,
-//       timeTaken: time, // seconds
+//       correctChars,
+//       timeTaken: time,
 //     };
-
 //     try {
 //       setLoading(true);
-//       await saveTest(data);
-//       alert("Test saved successfully!");
-//       setTypedText("");
-//       setCorrectChars(0);
+//      const response = await saveTest(data);
+//     console.log("DB returned:", response);
+//     // show backend-calculated result
+//     setResult({
+//       wpm: response.wpm,
+//       accuracy: response.accuracy,
+//       time: response.time_taken,
+// // setResult({
+// //         wpm,
+// //         accuracy,
+// //         time,
+//       });
+
+//       setIsRunning(false);
 //     } catch (err) {
 //       console.error(err);
 //       alert("Failed to save test");
@@ -227,18 +247,44 @@ export default TypingBox;
 //       setLoading(false);
 //     }
 //   };
+// const handleReset = () => {
+//   setTypedText("");
+//   setCorrectChars(0);
+//   setResult(null);
+//   setTime(0);
+//   setIsRunning(false);
+//   fetchText();
+// };
+
 
 //   return (
 //     <div style={{ textAlign: "center" }}>
-//       <h2 style={{ color: "#B983FF" }}>Typing Speed Test</h2>
-
-//       <p style={{ color: "#E6E1F0", marginBottom: "10px" }}>
+//       <p 
+//   onCopy={(e) => e.preventDefault()}
+//   onCut={(e) => e.preventDefault()}
+//   onContextMenu={(e) => e.preventDefault()}
+//   style={{
+//     color: "#E6E1F0",
+//     marginBottom: "10px",
+//     userSelect: "none",
+//     WebkitUserSelect: "none",
+//     MozUserSelect: "none",
+//     msUserSelect: "none",
+//   }}
+// >
 //         {sampleText}
 //       </p>
 
 //       <textarea
 //         value={typedText}
 //         onChange={handleChange}
+//        onPaste={(e) => {
+//   e.preventDefault();
+//   alert("Paste is disabled during typing test");
+// }}
+//   onCopy={(e) => e.preventDefault()}
+//   onCut={(e) => e.preventDefault()}
+//   onContextMenu={(e) => e.preventDefault()}
 //         placeholder="Start typing..."
 //         style={{
 //           width: "80%",
@@ -255,6 +301,7 @@ export default TypingBox;
 //       />
 
 //       <br />
+   
 
 //       <button
 //         onClick={handleSubmit}
@@ -271,9 +318,35 @@ export default TypingBox;
 //       >
 //         {loading ? "Saving..." : "Submit"}
 //       </button>
+//       {result && (
+//         <div style={{ marginTop: "30px", color: "#E6E1F0" }}>
+//           <h3 style={{ color: "#B983FF" }}>Result</h3>
+//           <p>WPM: {result.wpm}</p>
+//           <p>Accuracy: {result.accuracy}%</p>
+//           <p>Time Taken: {result.time} sec</p>
+//           <button
+//       onClick={handleReset}
+//       style={{
+//         marginTop: "15px",
+//         padding: "8px 20px",
+//         background: "#1A1333",
+//         color: "#B983FF",
+//         border: "1px solid #5B2EFF",
+//         borderRadius: "6px",
+//         cursor: "pointer",
+//       }}
+//     >
+//       Reset
+//     </button>
+//         </div>
+//       )}
 //     </div>
 //   );
 // }
 
 // export default TypingBox;
+
+
+
+
 
