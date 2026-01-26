@@ -11,6 +11,9 @@ function Home({ isAuth }) {
   return (
   <div className="container" style={{ textAlign: "center" }}>
     <h1 style={{ color: "#B983FF" }}>Typing Speed Test</h1>
+<p style={{ color: "#aaa", fontSize: "14px" }}>
+  Each visit starts a new test..!
+</p>
 
     {/* 🔹 LOGIN / SIGNUP (only if NOT logged in) */}
     {!isAuth && (
@@ -52,6 +55,7 @@ function Home({ isAuth }) {
       time={time}
       setTime={setTime}
       setIsRunning={setIsRunning}
+       isAuth={isAuth}
     />
   </div>
 );

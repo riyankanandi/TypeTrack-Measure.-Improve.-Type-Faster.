@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { apiRequest } from "../services/api";
 
-function TypingBox({ time, setTime, isRunning, setIsRunning }) {
+function TypingBox({ time, setTime, isRunning, setIsRunning, isAuth }) {
   const [typedText, setTypedText] = useState("");
   const [sampleText, setSampleText] = useState("");
   const [correctChars, setCorrectChars] = useState(0);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [authAlertShown, setAuthAlertShown] = useState(false);
+
 // const navigate = useNavigate();
 
   // fetch text on load
@@ -23,8 +25,21 @@ function TypingBox({ time, setTime, isRunning, setIsRunning }) {
       console.error("Failed to fetch text", err);
     }
   };
-
+  // const handleFocus = () => {
+  //   if (!isAuth) {
+  //     alert("Please login to start typing ⌨️");
+  //   }
+  // };
   const handleChange = (e) => {
+      if (!isAuth) {
+    if (!authAlertShown) {
+      alert("Please login to start typing ⌨️");
+      setAuthAlertShown(true);
+    }
+    return;
+  }
+
+    
     const value = e.target.value;
 
     if (!isRunning) setIsRunning(true);
@@ -40,6 +55,10 @@ function TypingBox({ time, setTime, isRunning, setIsRunning }) {
   };
 
   const handleSubmit = async () => {
+     if (!isAuth) {
+    alert("Please login to submit your typing test 🔐");
+    return;
+  }
     if (!typedText.length) {
       alert("Start typing first!");
       return;
@@ -78,6 +97,7 @@ function TypingBox({ time, setTime, isRunning, setIsRunning }) {
     setResult(null);
     setTime(0);
     setIsRunning(false);
+     setAuthAlertShown(false);
     fetchText();
   };
 
@@ -99,7 +119,13 @@ function TypingBox({ time, setTime, isRunning, setIsRunning }) {
         value={typedText}
         onChange={handleChange}
         onPaste={(e) => e.preventDefault()}
-        placeholder="Start typing..."
+        placeholder={
+        isAuth
+          ? "Start typing..."
+          : "Login required to start typing"
+      }
+      readOnly={!isAuth}
+      // onFocus={handleFocus}
         style={{
           width: "80%",
           height: "120px",
@@ -119,6 +145,7 @@ function TypingBox({ time, setTime, isRunning, setIsRunning }) {
       <button
         onClick={handleSubmit}
         disabled={loading}
+        
         style={{
           marginTop: "20px",
           padding: "10px 25px",
@@ -129,7 +156,8 @@ function TypingBox({ time, setTime, isRunning, setIsRunning }) {
           cursor: "pointer",
         }}
       >
-        {loading ? "Saving..." : "Submit"}
+        {/* {loading ? "Saving..." : "Submit"} */}
+        {isAuth ? (loading ? "Saving..." : "Submit") : "Login to Submit"}
       </button>
 
       {result && (
@@ -141,6 +169,7 @@ function TypingBox({ time, setTime, isRunning, setIsRunning }) {
 
           <button
             onClick={handleReset}
+            
             style={{
               marginTop: "15px",
               padding: "8px 20px",
