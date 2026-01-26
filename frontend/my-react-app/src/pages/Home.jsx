@@ -1,13 +1,24 @@
 import { useState } from "react";
 import TypingBox from "../components/TypingBox";
 import Timer from "../components/Timer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+
 // import { Link } from "react-router-dom";
 // const isAuth = !!localStorage.getItem("token");
 import Result from "../components/Result";
-function Home({ isAuth }) {
+function Home({ isAuth, setIsAuth }) {
+
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const navigate = useNavigate();
+
+const handleLogout = () => {
+  localStorage.removeItem("token"); // remove JWT
+  setIsAuth(false);                 // update auth state
+  navigate("/");               // redirect
+};
+
   return (
   <div className="container" style={{ textAlign: "center" }}>
     <h1 style={{ color: "#B983FF" }}>Typing Speed Test</h1>
@@ -48,6 +59,23 @@ function Home({ isAuth }) {
         View History
       </Link>
     )}
+{isAuth && (
+  <button
+    onClick={handleLogout}
+    style={{
+      marginBottom: "15px",
+      marginLeft: "10px",
+      padding: "6px 14px",
+      background: "#5B2EFF",
+      color: "#fff",
+      border: "none",
+      borderRadius: "6px",
+      cursor: "pointer",
+    }}
+  >
+    Logout
+  </button>
+)}
 
     <Timer time={time} setTime={setTime} isRunning={isRunning} />
 
@@ -61,6 +89,25 @@ function Home({ isAuth }) {
 );
 }
 export default Home;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //   return (
 //     <div className="container" style={{ textAlign: "center" }}>
