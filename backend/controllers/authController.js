@@ -1,6 +1,19 @@
 const pool = require("../config/db");
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+ 
+};
+const cookieOptionsWithExpiry = {
+  ...cookieOptions,
+  maxAge: 24 * 60 * 60 * 1000,
+};
+exports.me = (req, res) => {
+  res.json({ userId: req.userId });
+};
 
 // REGISTER
 exports.register = async (req, res) => {
@@ -60,11 +73,21 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+    // const token = generateToken(user.id);
+
+    // res.status(200).json({ token });
     const token = generateToken(user.id);
 
-    res.status(200).json({ token });
+res.cookie("token", token, cookieOptionsWithExpiry);
+res.json({ message: "Logged in" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
+};
+// LOGOUT
+exports.logout = (req, res) => {
+
+res.clearCookie("token", cookieOptions);
+  res.json({ message: "Logged out" });
 };

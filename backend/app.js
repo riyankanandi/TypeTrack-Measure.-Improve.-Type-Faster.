@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const scoreRoutes = require("./routes/scoreRoutes");
 require("./config/db");
@@ -9,16 +10,22 @@ require("./config/db");
 // const scoreRoutes = require("./routes/scoreRoutes");
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
+app.use(cookieParser());
+
+
 // app.use("/api/quotes", quoteRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/scores", scoreRoutes);
 // app.use("/api/tests", testRoutes);
 
-// app.get("/", (req, res) => {
-//   res.send("Backend running 🚀");
-// });
+
 // app.get("/test-db", async (req, res) => {
 //   try {
 //     const pool = require("./config/db");

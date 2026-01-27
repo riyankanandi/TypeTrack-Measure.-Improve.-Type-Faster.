@@ -2,7 +2,7 @@ import { useState } from "react";
 import TypingBox from "../components/TypingBox";
 import Timer from "../components/Timer";
 import { Link, useNavigate } from "react-router-dom";
-
+import { apiRequest } from "../services/api";
 
 // import { Link } from "react-router-dom";
 // const isAuth = !!localStorage.getItem("token");
@@ -13,12 +13,16 @@ function Home({ isAuth, setIsAuth }) {
   const [isRunning, setIsRunning] = useState(false);
   const navigate = useNavigate();
 
-const handleLogout = () => {
-  localStorage.removeItem("token"); // remove JWT
-  setIsAuth(false);                 // update auth state
-  navigate("/");               // redirect
+const handleLogout = async () => {
+  // localStorage.removeItem("token"); // remove JWT
+  // setIsAuth(false);                 // update auth state
+  // navigate("/");               // redirect
+  await apiRequest("/auth/logout", {
+    method: "POST",
+})
+setIsAuth(false);
+  navigate("/");
 };
-
   return (
   <div className="container" style={{ textAlign: "center" }}>
     <h1 style={{ color: "#B983FF" }}>Typing Speed Test</h1>
