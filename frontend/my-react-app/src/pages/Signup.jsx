@@ -1,7 +1,8 @@
 
 import { apiRequest } from "../services/api";
 import { useNavigate } from "react-router-dom";
-
+import AuthWrapper from "../components/AuthWrapper";
+import '../App.css';
 export default function Signup({ setIsAuth }) {
   const navigate = useNavigate();
 
@@ -55,11 +56,23 @@ export default function Signup({ setIsAuth }) {
   // };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Signup</h2>
-      <input name="email" type="email" required />
-      <input name="password" type="password" required />
-      <button>Signup</button>
-    </form>
+   
+       <div className="auth-page">
+      <div className="auth-box">
+        <h1 style={{ color: "#B983FF", marginBottom: "20px" }}>Sign Up</h1>
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-row">
+            <label htmlFor="email">Email:</label>
+            <input name="email" type="email" required />
+          </div>
+          <div className="form-row">
+            <label htmlFor="password">Password:</label>
+            <input name="password" type="password" required />
+          </div>
+          <button className="button_cust">Signup</button>
+        </form>
+      </div>
+    </div>
+   
   );
 }

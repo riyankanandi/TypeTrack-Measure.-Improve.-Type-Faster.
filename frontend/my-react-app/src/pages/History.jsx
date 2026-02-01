@@ -83,7 +83,8 @@
 
 import { useEffect, useState } from "react";
 import { apiRequest } from "../services/api";
-
+import AuthWrapper from "../components/AuthWrapper";
+import '../App.css';
 function History() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -109,7 +110,7 @@ function History() {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <h2 style={{ color: "#B983FF" }}>Typing History</h2>
+      <h2 style={{ color: "#B983FF", paddingTop:"1rem" }}>Typing History</h2>
 
       {history.length === 0 ? (
         <p>No history available.</p>

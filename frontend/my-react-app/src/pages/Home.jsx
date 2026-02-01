@@ -11,6 +11,7 @@ function Home({ isAuth, setIsAuth }) {
 
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
 
 const handleLogout = async () => {
@@ -21,73 +22,75 @@ const handleLogout = async () => {
     method: "POST",
 })
 setIsAuth(false);
+setSubmitted(false);
+  setTime(0);
+  setIsRunning(false);
   navigate("/");
 };
   return (
-  <div className="container" style={{ textAlign: "center" }}>
+  <div className="container home " style={{ textAlign: "center" }}>
     <h1 style={{ color: "#B983FF" }}>Typing Speed Test</h1>
-<p style={{ color: "#aaa", fontSize: "14px" }}>
+<p className="subtitle" >
   Each visit starts a new test..!
 </p>
 
     {/* 🔹 LOGIN / SIGNUP (only if NOT logged in) */}
     {!isAuth && (
-      <div style={{ marginBottom: "15px" }}>
+      <div className="auth-buttons">
         <Link
           to="/login"
-          style={{ marginRight: "15px", color: "#B983FF" }}
+          className="button_cust no-underline"
+           
         >
           Login
         </Link>
         <Link
           to="/signup"
-          style={{ color: "#B983FF" }}
+          className="button_cust no-underline"
         >
           Signup
         </Link>
       </div>
     )}
-
-    {/* 🔹 HISTORY (only if logged in – optional but recommended) */}
-    {isAuth && (
-      <Link
-        to="/history"
-        style={{
-          display: "inline-block",
-          marginBottom: "15px",
-          color: "#B983FF",
-          textDecoration: "underline",
-          cursor: "pointer",
-        }}
-      >
-        View History
-      </Link>
-    )}
 {isAuth && (
   <button
     onClick={handleLogout}
-    style={{
-      marginBottom: "15px",
-      marginLeft: "10px",
-      padding: "6px 14px",
-      background: "#5B2EFF",
-      color: "#fff",
-      border: "none",
-      borderRadius: "6px",
-      cursor: "pointer",
-    }}
+    className="button_cust"
+    
+    // style={{
+    //   marginBottom: "15px",
+    //   marginLeft: "10px",
+    //   padding: "6px 14px",
+    //   background: "#5B2EFF",
+    //   color: "#fff",
+    //   border: "none",
+    //   borderRadius: "6px",
+    //   cursor: "pointer",
+    // }}
   >
     Logout
   </button>
 )}
+    {/* 🔹 HISTORY (only if logged in – optional but recommended) */}
+    {isAuth && (
+      <Link
+        to="/history"
+        className="history-link"
+      >
+        View History
+      </Link>
+    )}
 
-    <Timer time={time} setTime={setTime} isRunning={isRunning} />
+
+    <Timer time={time} setTime={setTime} isRunning={isRunning}  />
 
     <TypingBox
       time={time}
       setTime={setTime}
       setIsRunning={setIsRunning}
        isAuth={isAuth}
+        submitted={submitted}
+  setSubmitted={setSubmitted}
     />
   </div>
 );

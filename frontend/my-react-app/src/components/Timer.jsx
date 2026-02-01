@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-
 function Timer({ time, setTime, isRunning }) {
   useEffect(() => {
     if (!isRunning) return;
@@ -11,7 +10,8 @@ function Timer({ time, setTime, isRunning }) {
     return () => clearInterval(interval);
   }, [isRunning, setTime]);
 
-  return <p>Time: {time} sec</p>;
+  return  <p>Time: {time} sec</p>;
+   
 }
 
 export default Timer;

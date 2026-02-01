@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { apiRequest } from "../services/api";
 
-function TypingBox({ time, setTime, isRunning, setIsRunning, isAuth }) {
+function TypingBox({ time, setTime, isRunning, setIsRunning, isAuth,submitted,
+  setSubmitted }) {
   const [typedText, setTypedText] = useState("");
   const [sampleText, setSampleText] = useState("");
   const [correctChars, setCorrectChars] = useState(0);
@@ -9,8 +10,15 @@ function TypingBox({ time, setTime, isRunning, setIsRunning, isAuth }) {
   const [result, setResult] = useState(null);
   const [authAlertShown, setAuthAlertShown] = useState(false);
 
-// const navigate = useNavigate();
 
+// const navigate = useNavigate();
+useEffect(() => {
+  if (!isAuth) {
+    setTypedText("");
+    setCorrectChars(0);
+    setResult(null);
+  }
+}, [isAuth]);
   // fetch text on load
   useEffect(() => {
     fetchText();
@@ -82,6 +90,7 @@ function TypingBox({ time, setTime, isRunning, setIsRunning, isAuth }) {
         wpm: response.wpm,
         accuracy: response.accuracy,
       });
+setSubmitted(true);
 
     } catch (err) {
       console.error(err);
@@ -98,19 +107,18 @@ function TypingBox({ time, setTime, isRunning, setIsRunning, isAuth }) {
     setTime(0);
     setIsRunning(false);
      setAuthAlertShown(false);
+     setSubmitted(false);
     fetchText();
+
   };
 
   return (
-    <div style={{ textAlign: "center" }}>
+    <div className="typing-box">
       <p
+       className="sample-text"
         onCopy={(e) => e.preventDefault()}
         onContextMenu={(e) => e.preventDefault()}
-        style={{
-          color: "#E6E1F0",
-          marginBottom: "10px",
-          userSelect: "none",
-        }}
+       
       >
         {sampleText}
       </p>
@@ -119,50 +127,47 @@ function TypingBox({ time, setTime, isRunning, setIsRunning, isAuth }) {
         value={typedText}
         onChange={handleChange}
         onPaste={(e) => e.preventDefault()}
+          onKeyDown={(e) => {
+    if (submitted) e.preventDefault();
+  }}
+  onMouseDown={(e) => {
+    if (submitted) e.preventDefault();
+  }}
+  onSelect={(e) => {
+    if (submitted) e.preventDefault();
+  }}
         placeholder={
-        isAuth
-          ? "Start typing..."
-          : "Login required to start typing"
-      }
+      //   isAuth
+      //     ? "Start typing..."
+      //     : "Login required to start typing"
+      // }
+       isAuth
+      ? submitted
+        ? "Test submitted"
+        : "Start typing..."
+      : "Login required to start typing"
+  }
       readOnly={!isAuth}
+      className="typing-textarea"
       // onFocus={handleFocus}
-        style={{
-          width: "80%",
-          height: "120px",
-          background: "#0F0A1F",
-          color: "#E6E1F0",
-          border: "1px solid #5B2EFF",
-          caretColor: "#B983FF",
-          outline: "none",
-          resize: "none",
-          padding: "10px",
-          fontSize: "16px",
-        }}
+       
       />
 
       <br />
+{!submitted && (
 
       <button
         onClick={handleSubmit}
         disabled={loading}
-        
-        style={{
-          marginTop: "20px",
-          padding: "10px 25px",
-          background: "#5B2EFF",
-          color: "#E6E1F0",
-          border: "none",
-          borderRadius: "6px",
-          cursor: "pointer",
-        }}
+        className="button_cust"
       >
         {/* {loading ? "Saving..." : "Submit"} */}
         {isAuth ? (loading ? "Saving..." : "Submit") : "Login to Submit"}
       </button>
-
-      {result && (
-        <div style={{ marginTop: "30px", color: "#E6E1F0" }}>
-          <h3 style={{ color: "#B983FF" }}>Result</h3>
+)}
+      {isAuth &&result && (
+        <div className="resultShow">
+          <h3 className="result-title">Result</h3>
           <p>WPM: {result.wpm}</p>
           <p>Accuracy: {result.accuracy}%</p>
           <p>Time Taken: {time} sec</p>
@@ -170,15 +175,7 @@ function TypingBox({ time, setTime, isRunning, setIsRunning, isAuth }) {
           <button
             onClick={handleReset}
             
-            style={{
-              marginTop: "15px",
-              padding: "8px 20px",
-              background: "#1A1333",
-              color: "#B983FF",
-              border: "1px solid #5B2EFF",
-              borderRadius: "6px",
-              cursor: "pointer",
-            }}
+           className="button_cust"
           >
             Reset
           </button>

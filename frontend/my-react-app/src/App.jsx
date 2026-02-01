@@ -20,12 +20,16 @@ function App() {
   }, []);
    
   return (
+      
     <Routes>
       <Route path="/" element={<Home isAuth={isAuth} setIsAuth={setIsAuth} />} />
       <Route path="/login" element={<Login setIsAuth={setIsAuth} />} />
       <Route path="/signup" element={<Signup setIsAuth={setIsAuth} />} />
       <Route path="/history" element={isAuth ? <History /> : <Login setIsAuth={setIsAuth} />} />
     </Routes>
+
+
+    
   );
 }
 

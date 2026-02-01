@@ -3,7 +3,7 @@ function Result({ result }) {
 
   return (
     <div className="result">
-      <h3>Result</h3>
+      <p >Result</p>
       <p>WPM: {result.wpm}</p>
       <p>Accuracy: {result.accuracy}%</p>
       <p>Time: {result.time} sec</p>

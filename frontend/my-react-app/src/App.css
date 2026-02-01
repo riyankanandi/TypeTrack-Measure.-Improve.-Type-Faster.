@@ -1,42 +1,122 @@
-/* #root {
-  max-width: 1280px;
+/* Full screen background + center container */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(30, 30, 30, 0.85); /* same as body */
+  padding: 20px;
+}
+
+/* Box/card */
+.auth-box {
+  width: 100%;
+  max-width: 420px;       /* desktop width */
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  text-align: center;
+  max-height: 90vh;       /* prevent overflow */
+  overflow-y: auto;       /* scroll if content too tall */
+}
+
+/* Form inside the box */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-start; /* align label+input left */
+  margin-top: 20px;
+}
+
+/* Label + input row */
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.form-row label {
+  width: 100px;
+  color: #e6e1f0;
+  text-align: left;
+  font-size: 1rem;
+}
+
+.form-row input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #444;
+  padding: 6px 8px;
+  color: #eaeaea;
+  font-size: 1rem;
+  outline: none;
+}
+
+.form-row input:focus {
+  border-color: #b983ff;
+}
+
+/* Button */
+.auth-form .button_cust {
+  width: 60%;
   margin: 0 auto;
-  padding: 2rem;
+  display: block;
+  background-color: #c2c2c2;
+  border: 1px solid #444;
+  color: #61339c;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+/* .history-table {
+  width: 100%; */
+  /* border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.history-table th,
+.history-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.history-table th {
+  background: rgba(255, 255, 255, 0.1);
+  color: #b983ff;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+.history-table td {
+  color: #eaeaea;
 } */
+/* 🔹 Mobile adjustments */
+@media (max-width: 768px) {
+  .auth-box {
+    max-width: 100%;
+    padding: 20px;
+  }
+  .form-row label {
+    width: 80px;
+    font-size: 0.95rem;
+  }
+  .form-row input {
+    font-size: 0.95rem;
+  }
+  .auth-form .button_cust {
+    width: 100%;
+  }
+    .auth-box {
+    padding: 20px;
+  }
+/* 
+  .history-table th,
+  .history-table td {
+    font-size: 0.9rem;
+    padding: 6px; */
+}

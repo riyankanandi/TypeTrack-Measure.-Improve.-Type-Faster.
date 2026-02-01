@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../services/api";
+import AuthWrapper from "../components/AuthWrapper";
+import '../App.css';
 export default function Login({ setIsAuth }) {
     const navigate = useNavigate();
   const handleSubmit = async (e) => {
@@ -35,11 +37,19 @@ try {
   // };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Login</h2>
+     <AuthWrapper title="Login">
+    <form onSubmit={handleSubmit} className="auth-form">
+      {/* <h2>Login</h2> */}
+       <div className="form-row">
+          <label htmlFor="email">Email : </label>
       <input name="email" type="email" required />
+      </div>
+      <div className="form-row">
+          <label htmlFor="password">Password :</label>
       <input name="password" type="password" required />
-      <button>Login</button>
+      </div>
+      <button className="button_cust">Login</button>
     </form>
+    </AuthWrapper>
   );
 }
