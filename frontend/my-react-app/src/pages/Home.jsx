@@ -28,6 +28,9 @@ setSubmitted(false);
   navigate("/");
 };
   return (
+    <div className="home-wrapper">
+
+  <img src="/typing.png" alt="Logo" className="top-left-logo" />
   <div className="container home " style={{ textAlign: "center" }}>
     <h1 style={{ color: "#B983FF" }}>Typing Speed Test</h1>
 <p className="subtitle" >
@@ -92,6 +95,7 @@ setSubmitted(false);
         submitted={submitted}
   setSubmitted={setSubmitted}
     />
+  </div>
   </div>
 );
 }

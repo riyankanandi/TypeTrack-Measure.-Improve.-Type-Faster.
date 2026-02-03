@@ -50,12 +50,21 @@ html, body {
 } */
 
 /* MAIN CONTAINER */
+.top-left-logo{
+  position: fixed;   /* keeps it always in corner */
+  top: 1rem;         /* distance from top */
+  left: 1.55rem;        /* distance from left */
+  width: 70px;       /* adjust size */
+  height: 70px;      /* adjust size */
+  z-index: 1000;
+}
 .container {
   width: 100%;
   /* max-width: 900px; */
   min-height: 550px;
   margin: auto;
-  padding: 40px;
+  /* padding-top: 5rem; */
+  padding: 5rem;
   /* background: rgba(255, 255, 255, 0.06); */
     background: rgba(30, 30, 30, 0.95);
   /* backdrop-filter: blur(6px); */
@@ -306,4 +315,10 @@ textarea:focus {
   .sample-text {
     font-size: 0.95rem;
   }
+  .top-left-logo {
+    width: 35px;     /* smaller logo on mobile */
+    height: 35px;
+    top: 5px;
+    left: 5px;
+}
 }

@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:5000/api"; // backend port
+// // const API_URL =import.meta.env.VITE_API_URL;
+// const API_URL = "http://localhost:5000/api"; // backend port
 
 export async function apiRequest(endpoint, options = {}) {
   // const token = localStorage.getItem("token");
@@ -13,7 +14,8 @@ export async function apiRequest(endpoint, options = {}) {
   //   ...options,
   //   headers,
   // });
- const res = await fetch(`${API_URL}${endpoint}`, {
+ const res = await fetch(`/api${endpoint}`, {
+// const res = await fetch(`${API_URL}${endpoint}`, {
     credentials: "include", // 🔥 REQUIRED FOR COOKIES
     headers: {
       "Content-Type": "application/json",
