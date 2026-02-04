@@ -5,6 +5,7 @@ const path = require("path");
 const app = express();
 const authRoutes = require("./routes/authRoutes");
 const scoreRoutes = require("./routes/scoreRoutes");
+require("dotenv").config();
 require("./config/db");
 
 app.use(express.static(path.join(__dirname, "dist")));

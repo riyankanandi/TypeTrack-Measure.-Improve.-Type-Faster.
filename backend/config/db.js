@@ -1,4 +1,6 @@
 const { Pool } = require("pg");
+console.log("DB_URL loaded:", !!process.env.DB_URL);
+console.log("ENV KEYS:", Object.keys(process.env));
 
 const pool = new Pool({
   // host: "localhost",
